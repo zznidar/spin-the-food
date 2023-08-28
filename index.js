@@ -54,21 +54,35 @@ function spin() {
     vsebnik.style.setProperty('--animation-time', `${lerp(2.7, 10, Math.random())}s`); // Math.max(0.7, Math.random() * 2.3) // 2.7, 10
     let rotationDeg = Math.random() * 720;
     vsebnik.style.setProperty('--rotation-deg', `${rotationDeg}deg`);
+
+    requestAnimationFrame((time) => {
+        requestAnimationFrame((time) => {
+          vsebnik.classList.add("animating");
+        });
+      });
+
+
     // vsebnik.style.transform += (`rotate(${rotationDeg}deg)`);
     //vsebnik.style.setProperty('--rotation-deg', `${90}deg`);
 }
 
 
 function inRange(x, min, max, willOpen = 0, willClose = 0) {
-    return ((x-min+willOpen) * (x-max-willClose) <= 0);
+    xm = x % 100;
+    x = Math.floor(x/100) + (xm/60);
+    minm = min % 100;
+    min = Math.floor(min/100) + ((minm-willOpen)/60);
+    maxm = max % 100;
+    max = Math.floor(max/100) + ((maxm-willClose)/60);
+    return ((x-min) * (x-max) <= 0);
 }
 
 function filtriraj() {
-    willopen = document.getElementById("willopen").value;
-    willclose = document.getElementById("willclose").value;
+    willopen = parseInt(document.getElementById("willopen").value);
+    willclose = parseInt(document.getElementById("willclose").value);
     let d = new Date();
     let danes = (d.getDay() + 6) % 7;
-    let cas = `${`${d.getHours()}`.padStart(2, "0")}${`${d.getMinutes()}`.padStart(2, "0")}`;
+    let cas = parseInt(`${`${d.getHours()}`.padStart(2, "0")}${`${d.getMinutes()}`.padStart(2, "0")}`);
     console.log(danes, lokali[0].openinghours[danes].openfrom, lokali[0].openinghours[danes].opento, cas)
     filtriraniLokali = lokali.filter((x) => inRange(cas, x.openinghours[danes].openfrom, x.openinghours[danes].opento, willopen, willclose)).filter((x) => x.City == "Ljubljana");
     //imena = filtriraniLokali.flatMap((x) => x.City == "Ljubljana" ? x.Name : []) ;
@@ -97,18 +111,18 @@ function won(e) {
     // obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     i = Math.round((1 - obrnjeno/360) * stElementov);
-    let ime = filtriraniLokali[i]["Name"];
+    let ime = filtriraniLokali[i]?.["Name"] ?? "V izbranem času ni odprtih lokalov.";
     console.log(i, ime);
     let p = document.createElement("p");
     p.innerText = ime;
     p.style.margin = "0px";
     rezultat.appendChild(p);
     
-    rezultat.style.backgroundColor = `hsl(${hashColor2(filtriraniLokali[i]["Name"])[0] * 360}, ${hashColor2(filtriraniLokali[i]["Name"])[1] * 100}%, 80%)`;
+    rezultat.style.backgroundColor = `hsl(${hashColor2(ime)[0] * 360}, ${hashColor2(ime)[1] * 100}%, 80%)`;
     rezultat.classList.remove("hidden");
 
     let a = document.createElement("a");
-    let naslov = `${filtriraniLokali[i]["Address"]} ${filtriraniLokali[i]["City"]}`
+    let naslov = `${filtriraniLokali[i]?.["Address"]} ${filtriraniLokali[i]?.["City"]}`
     a.innerText = naslov;
     a.classList.add("address");
     a.href = `https://www.google.com/maps/search/?api=1&query=${naslov} ${ime}`;
@@ -119,7 +133,7 @@ function won(e) {
     zmagovalec.classList.add("zmagovalec");
     createDucks(20);
 
-    getMenu(filtriraniLokali[i]["ID"]).then((menu) => {
+    getMenu(filtriraniLokali[i]?.["ID"]).then((menu) => {
         menu = menu ?? [];
         menu = menu.filter((x) => x["Date"].split("T")[0] == (new Date()).toISOString().split("T")[0]);
 
@@ -144,6 +158,21 @@ function won(e) {
 
 vsebnik.addEventListener("animationend", won, false);
 // vsebnik.addEventListener("transitionend", won, false);
+
+
+settings = document.getElementById("settings");
+settings.addEventListener("change", () => {
+    console.log("changed");
+    vsebnik.classList.remove("animating");
+    filtriraniLokali = filtriraj();
+    if(filtriraniLokali.length === 0) {
+        document.getElementById("message").classList.remove("hidden");
+    } else {
+        document.getElementById("message").classList.add("hidden");
+    }
+    populateWheel(filtriraniLokali.map((x) => x.Name));
+});
+
 
 const lerp = (a, b, x) => (a + x * (b - a)); // Linear interpolation
 

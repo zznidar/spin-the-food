@@ -74,9 +74,11 @@ ul li {
     position: absolute;
     /* animation: spin var(--animation-time) cubic-bezier(0,.55,.45,1) forwards; */
     /* animation: spin var(--animation-time) cubic-bezier(0,.54,.42,1.15) forwards; */
-    animation: spin var(--animation-time) cubic-bezier(var(--kurva)) forwards;
     /* transition: transform var(--animation-time) cubic-bezier(var(--kurva)); */
     /* scale:0.5; */
+}
+.animating {
+    animation: spin var(--animation-time) cubic-bezier(var(--kurva)) forwards;
 }
 
 
