@@ -41,6 +41,11 @@ function populateWheel(vsebina) {
         //p.style.backgroundColor = `#${hashColor(vsebina[i])}`;
         p.style.backgroundColor = `hsl(${hashColor2(vsebina[i])[0] * 360}, ${hashColor2(vsebina[i])[1] * 100}%, 80%)`;
         p.style.transform = "rotate(" + (360 / stElementov * i) + "deg)";
+        if(i !== -1) {
+            p.addEventListener("touchstart", manualSpinStart);
+            p.addEventListener("touchmove", manualSpinMove);
+            p.addEventListener("touchend", manualSpinEnd);
+        }
         vsebnik.appendChild(p);
     }
 
@@ -55,6 +60,8 @@ function spin() {
     let rotationDeg = Math.random() * 720;
     vsebnik.style.setProperty('--rotation-deg', `${rotationDeg}deg`);
 
+    vsebnik.classList.remove("animating");
+
     requestAnimationFrame((time) => {
         requestAnimationFrame((time) => {
           vsebnik.classList.add("animating");
@@ -64,6 +71,28 @@ function spin() {
 
     // vsebnik.style.transform += (`rotate(${rotationDeg}deg)`);
     //vsebnik.style.setProperty('--rotation-deg', `${90}deg`);
+}
+
+
+function manualSpinStart(e) {
+
+}
+function manualSpinMove(e) {
+    e.preventDefault();
+    touch = e.changedTouches[0];
+    let rect = vsebnik.getBoundingClientRect();
+    wx = rect.right;
+    wy = rect.bottom;
+    x = touch.clientX;
+    y = touch.clientY;
+    let kot = Math.atan2(y-wy, x-wx) * 180 / Math.PI;
+
+    mydeg = parseInt(e.target.style.transform.slice(7, -4));
+    
+    vsebnik.style.setProperty('--rotation-deg', `${kot - mydeg}deg`);
+}
+function manualSpinEnd(e) {
+    spin();
 }
 
 
@@ -83,7 +112,7 @@ function filtriraj() {
     let d = new Date();
     let danes = (d.getDay() + 6) % 7;
     let cas = parseInt(`${`${d.getHours()}`.padStart(2, "0")}${`${d.getMinutes()}`.padStart(2, "0")}`);
-    console.log(danes, lokali[0].openinghours[danes].openfrom, lokali[0].openinghours[danes].opento, cas)
+    //console.log(danes, lokali[0].openinghours[danes].openfrom, lokali[0].openinghours[danes].opento, cas)
     filtriraniLokali = lokali.filter((x) => inRange(cas, x.openinghours[danes].openfrom, x.openinghours[danes].opento, willopen, willclose)).filter((x) => x.City == "Ljubljana");
     //imena = filtriraniLokali.flatMap((x) => x.City == "Ljubljana" ? x.Name : []) ;
     mesta = [...new Set(lokali.map((x) => x.City))];
@@ -109,7 +138,7 @@ async function getMenu(id) {
 function won(e) {
     console.log(e);
     // obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
-    obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
+    obrnjeno = (((parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360) + 360) % 360; 
     i = Math.round((1 - obrnjeno/360) * stElementov);
     let ime = filtriraniLokali[i]?.["Name"] ?? "V izbranem času ni odprtih lokalov.";
     console.log(i, ime);
@@ -140,7 +169,7 @@ function won(e) {
         let ul = document.createElement("ul");
         for(let m of menu) {
             let jed = `<span class="mainDish">${m["MainDish"]}</span>, ${m["StepOne"]}, ${m["StepTwo"]}, ${m["StepThree"]}`;
-            console.log(jed);
+            //console.log(jed);
             let li = document.createElement("li");
             li.innerHTML = jed;
             ul.appendChild(li);

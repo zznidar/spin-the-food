@@ -66,7 +66,7 @@ ul li {
     clip-path: polygon(100% -50%, 100% 150%, 0px 50%);  
     /* polygon(10em 0%, 100% 0%, 100% 100%, 10em 100%, 0px 50%) 
     20px 40px 20px 10em */
-    top: calc((min(54vh,54vw) * 2 * pi / var(--stElementov) - min(2vw,2vh) / 2) / -1);
+    top: calc((min(54vh,54vw) * 1 * pi / var(--stElementov) - min(2vw,2vh)) / -0.5);
 }
 #vsebnik {
     top: calc(min(54vw,54vh) + 30vh);
