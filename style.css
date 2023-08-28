@@ -1,0 +1,85 @@
+.triangle {
+    width: 0;
+    height: 0;
+    border: solid 20px;
+    border-color: #ff000090 transparent transparent transparent;
+
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.zmagovalec {
+    border: 5px dashed purple;
+    z-index: 9999;
+    padding-right: 10em;
+    font-weight: bold;
+}
+
+#rezultat {
+    z-index: 1;
+    position: absolute;
+    padding: 0.5em;
+    background-color: #f0f8ffdd;
+    border: 5px dashed purple;
+    top: calc(min(54vw,54vh) + 30vh);
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+    font-size: 1.6em;
+  }
+
+.hidden {
+    display: none;
+}
+
+.polje {
+    width: max-content;
+    transform-origin: left;
+    position: absolute;
+    /* font-size: 0.7em;
+    padding-left: 20em; */
+    font-size: min(2vw,2vh);
+    padding-left: min(54vw,54vh);
+    padding-top: calc(min(54vh,54vw) * 1 * pi / var(--stElementov) - min(2vw,2vh) / 2);
+    padding-bottom: calc(min(54vh,54vw) * 1 * pi / var(--stElementov) - min(2vw,2vh) / 2);
+    margin: 0;
+    clip-path: polygon(100% -50%, 100% 150%, 0px 50%);  
+    /* polygon(10em 0%, 100% 0%, 100% 100%, 10em 100%, 0px 50%) 
+    20px 40px 20px 10em */
+    top: calc((min(54vh,54vw) * 2 * pi / var(--stElementov) - min(2vw,2vh) / 2) / -2);
+}
+#vsebnik {
+    top: calc(min(54vw,54vh) + 30vh);
+    left: 50%;
+    position: absolute;
+    /* animation: spin var(--animation-time) cubic-bezier(0,.55,.45,1) forwards; */
+    /* animation: spin var(--animation-time) cubic-bezier(0,.54,.42,1.15) forwards; */
+    animation: spin var(--animation-time) cubic-bezier(var(--kurva)) forwards;
+    /* transition: transform var(--animation-time) cubic-bezier(var(--kurva)); */
+    /* scale:0.5; */
+}
+
+
+@keyframes spin { 100% { transform:rotate(var(--rotation-deg)); } }
+
+
+.raca {
+    position: fixed;
+    margin: 0px;
+    z-index: 99;
+    font-size: 2em;
+    cursor: pointer;
+    animation-name: fadeOut;
+    /* animation-duration: 0.5s; */
+    animation-fill-mode: forwards;
+    animation-duration: 0.5s;
+    opacity: 0;
+}
+@keyframes fadeOut {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
