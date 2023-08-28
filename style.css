@@ -14,14 +14,14 @@
 .zmagovalec {
     border: 5px dashed purple;
     z-index: 9999;
-    padding-right: 10em;
+    padding-right: 10rem;
     font-weight: bold;
 }
 
 #rezultat {
     z-index: 1;
     position: absolute;
-    padding: 0.5em;
+    padding: 0.5rem;
     background-color: #f0f8ffdd;
     border: 5px dashed purple;
     top: calc(min(54vw,54vh) + 30vh);
@@ -29,8 +29,15 @@
     right: 0;
     margin: auto;
     text-align: center;
-    font-size: 1.6em;
-  }
+    font-size: 1.6rem;
+}
+ul {
+    font-size: 1rem;
+}
+ul li {
+    border-bottom: 1px purple dashed;
+    padding-bottom: 0.1rem;
+}
 
 .hidden {
     display: none;
@@ -50,7 +57,7 @@
     clip-path: polygon(100% -50%, 100% 150%, 0px 50%);  
     /* polygon(10em 0%, 100% 0%, 100% 100%, 10em 100%, 0px 50%) 
     20px 40px 20px 10em */
-    top: calc((min(54vh,54vw) * 2 * pi / var(--stElementov) - min(2vw,2vh) / 2) / -2);
+    top: calc((min(54vh,54vw) * 2 * pi / var(--stElementov) - min(2vw,2vh) / 2) / -1);
 }
 #vsebnik {
     top: calc(min(54vw,54vh) + 30vh);
@@ -71,7 +78,7 @@
     position: fixed;
     margin: 0px;
     z-index: 99;
-    font-size: 2em;
+    font-size: 2rem;
     cursor: pointer;
     animation-name: fadeOut;
     /* animation-duration: 0.5s; */

@@ -10,6 +10,13 @@
 </head>
 <body>
     <p id="rezultat" class="hidden"></p>
+    <div id="settings" class="hidden">
+        <p>Čase, daljše od 60 min, je treba vipsati kot <i>hhmm</i>, torej <i>130</i> za 1&nbsp;h 30&nbsp;min</p>
+        <label for="willopen">Bo odprto čez x minut</label>
+        <input type="number" id="willopen" name="willopen" value="0">
+        <label for="willclose">Se še ne zapre v naslednjih x minutah</label>
+        <input type="number" id="willclose" name="willclose" value="0">
+    </div>
     <!-- Wheel of fortune -->
     <div id="vse">
         <div id="vsebnik"></div>

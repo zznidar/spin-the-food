@@ -21,6 +21,8 @@ function hashColor2(s) {
     return([a/999, b/999]);
 }
 
+var lokali, filtriraniLokali;
+
 vsebnik = document.getElementById("vsebnik");
 rezultat = document.getElementById("rezultat");
 function populateWheel(vsebina) {
@@ -61,36 +63,69 @@ function inRange(x, min, max, willOpen = 0, willClose = 0) {
     return ((x-min+willOpen) * (x-max-willClose) <= 0);
 }
 
+function filtriraj() {
+    willopen = document.getElementById("willopen").value;
+    willclose = document.getElementById("willclose").value;
+    let d = new Date();
+    let danes = (d.getDay() + 6) % 7;
+    let cas = `${`${d.getHours()}`.padStart(2, "0")}${`${d.getMinutes()}`.padStart(2, "0")}`;
+    console.log(danes, lokali[0].openinghours[danes].openfrom, lokali[0].openinghours[danes].opento, cas)
+    filtriraniLokali = lokali.filter((x) => inRange(cas, x.openinghours[danes].openfrom, x.openinghours[danes].opento, willopen, willclose)).filter((x) => x.City == "Ljubljana");
+    //imena = filtriraniLokali.flatMap((x) => x.City == "Ljubljana" ? x.Name : []) ;
+    mesta = [...new Set(lokali.map((x) => x.City))];
+    return(filtriraniLokali);
+}
+
 //const URL = "https://api.modra.ninja/prehrana/lokali";
 const URL = "lokali.json";
 fetch(URL).then((response) => {
-    lokali = response.json().then((data) => {
-        oa = data;
+    response.json().then((data) => {
+        lokali = data;
         //imena = data.map((x) => x.Name);
-        let d = new Date();
-        let danes = (d.getDay() + 6) % 7;
-        let cas = `${`${d.getHours()}`.padStart(2, "0")}${`${d.getMinutes()}`.padStart(2, "0")}`;
-        console.log(danes, oa[0].openinghours[danes].openfrom, oa[0].openinghours[danes].opento, cas)
-        data = data.filter((x) => inRange(cas, x.openinghours[danes].openfrom, x.openinghours[danes].opento, 15, 30));
-        imena = data.flatMap((x) => x.City == "Ljubljana" ? x.Name : []) ;
-        mesta = [...new Set(data.map((x) => x.City))];
-        populateWheel(imena);
+        filtriraniLokali = filtriraj(lokali);
+        populateWheel(filtriraniLokali.map((x) => x.Name));
     });
 })
+
+async function getMenu(id) {
+    let meni = await (await fetch(`https://api.modra.ninja/prehrana/meni/${id}`)).json();
+    return(meni);
+}
 
 function won(e) {
     console.log(e);
     // obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     i = Math.round((1 - obrnjeno/360) * stElementov);
-    console.log(i, imena[i]);
-    rezultat.innerHTML = imena[i];
-    rezultat.style.backgroundColor = `hsl(${hashColor2(imena[i])[0] * 360}, ${hashColor2(imena[i])[1] * 100}%, 80%)`;
+    console.log(i, filtriraniLokali[i]["Name"]);
+    rezultat.innerText = filtriraniLokali[i]["Name"];
+    rezultat.style.backgroundColor = `hsl(${hashColor2(filtriraniLokali[i]["Name"])[0] * 360}, ${hashColor2(filtriraniLokali[i]["Name"])[1] * 100}%, 80%)`;
     rezultat.classList.remove("hidden");
 
     zmagovalec = vsebnik.childNodes[i];
     zmagovalec.classList.add("zmagovalec");
     createDucks(20);
+
+    getMenu(filtriraniLokali[i]["ID"]).then((menu) => {
+        menu = menu.filter((x) => x["Date"].split("T")[0] == (new Date()).toISOString().split("T")[0]);
+
+        let ul = document.createElement("ul");
+        for(let m of menu) {
+            let jed = `${m["MainDish"]}, ${m["StepOne"]}, ${m["StepTwo"]}, ${m["StepThree"]}`;
+            console.log(jed);
+            let li = document.createElement("li");
+            li.innerHTML = jed;
+            ul.appendChild(li);
+        }
+        if(menu.length === 0) {
+            let li = document.createElement("li");
+            li.innerHTML = "Lokal za danes nima vpisanega menija.";
+            ul.appendChild(li);
+        }
+        rezultat.appendChild(ul);
+    });
+    //console.log("menu", menu);
+
 }
 
 vsebnik.addEventListener("animationend", won, false);
