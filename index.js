@@ -119,8 +119,8 @@ function filtriraj() {
     return(filtriraniLokali);
 }
 
-//const URL = "https://api.modra.ninja/prehrana/lokali";
-const URL = "lokali.json";
+const URL = "https://api.modra.ninja/prehrana/lokali";
+//const URL = "lokali.json";
 fetch(URL).then((response) => {
     response.json().then((data) => {
         lokali = data;
