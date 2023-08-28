@@ -97,21 +97,35 @@ function won(e) {
     // obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     i = Math.round((1 - obrnjeno/360) * stElementov);
-    console.log(i, filtriraniLokali[i]["Name"]);
-    rezultat.innerText = filtriraniLokali[i]["Name"];
+    let ime = filtriraniLokali[i]["Name"];
+    console.log(i, ime);
+    let p = document.createElement("p");
+    p.innerText = ime;
+    p.style.margin = "0px";
+    rezultat.appendChild(p);
+    
     rezultat.style.backgroundColor = `hsl(${hashColor2(filtriraniLokali[i]["Name"])[0] * 360}, ${hashColor2(filtriraniLokali[i]["Name"])[1] * 100}%, 80%)`;
     rezultat.classList.remove("hidden");
+
+    let a = document.createElement("a");
+    let naslov = `${filtriraniLokali[i]["Address"]} ${filtriraniLokali[i]["City"]}`
+    a.innerText = naslov;
+    a.classList.add("address");
+    a.href = `https://www.google.com/maps/search/?api=1&query=${naslov} ${ime}`;
+    a.target = "_blank";
+    rezultat.appendChild(a);
 
     zmagovalec = vsebnik.childNodes[i];
     zmagovalec.classList.add("zmagovalec");
     createDucks(20);
 
     getMenu(filtriraniLokali[i]["ID"]).then((menu) => {
+        menu = menu ?? [];
         menu = menu.filter((x) => x["Date"].split("T")[0] == (new Date()).toISOString().split("T")[0]);
 
         let ul = document.createElement("ul");
         for(let m of menu) {
-            let jed = `${m["MainDish"]}, ${m["StepOne"]}, ${m["StepTwo"]}, ${m["StepThree"]}`;
+            let jed = `<span class="mainDish">${m["MainDish"]}</span>, ${m["StepOne"]}, ${m["StepTwo"]}, ${m["StepThree"]}`;
             console.log(jed);
             let li = document.createElement("li");
             li.innerHTML = jed;

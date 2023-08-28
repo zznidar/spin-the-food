@@ -32,11 +32,20 @@
     font-size: 1.6rem;
 }
 ul {
-    font-size: 1rem;
+    font-size: 0.8rem;
 }
 ul li {
     border-bottom: 1px purple dashed;
     padding-bottom: 0.1rem;
+}
+.mainDish {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.address {
+    font-size: 0.9rem;
+    font-style: italic;
 }
 
 .hidden {
