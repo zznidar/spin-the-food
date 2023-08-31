@@ -53,14 +53,15 @@ function populateWheel(vsebina) {
     //spin();
 }
 
-function spin() {
+function spin(smer = 1) {
     vsebnik.style.setProperty('--kurva', `0,${lerp(0.54, 0.7, Math.random())},.42,${lerp(1, 1.15, Math.random())}`);
     // vsebnik.style.setProperty('--kurva', `${lerp(0, 1, Math.random())},${lerp(-1.5, 1.5, Math.random())},${lerp(0, 1, Math.random())},${lerp(-1.5, 1.5, Math.random())}`); // Povsem randomizirana krivulja
     vsebnik.style.setProperty('--animation-time', `${lerp(2.7, 10, Math.random())}s`); // Math.max(0.7, Math.random() * 2.3) // 2.7, 10
-    let rotationDeg = Math.random() * 720;
+    let rotationDeg = Math.random() * 720 * smer;
     vsebnik.style.setProperty('--rotation-deg', `${rotationDeg}deg`);
 
     vsebnik.classList.remove("animating");
+    vsebnik.classList.remove("animating2");
 
     requestAnimationFrame((time) => {
         requestAnimationFrame((time) => {
@@ -75,8 +76,13 @@ function spin() {
 
 
 function manualSpinStart(e) {
-
+    isManuallySpinning = true;
+    vsebnik.classList.remove("animating");
+    vsebnik.classList.add("animating2");
 }
+var isManuallySpinning = false;
+var lastKot = 0;
+var smer = 1;
 function manualSpinMove(e) {
     e.preventDefault();
     touch = e.changedTouches[0];
@@ -87,12 +93,16 @@ function manualSpinMove(e) {
     y = touch.clientY;
     let kot = Math.atan2(y-wy, x-wx) * 180 / Math.PI;
 
+    smer = (kot >= lastKot) ? 1 : -1;
+    lastKot = kot;
+
     mydeg = parseInt(e.target.style.transform.slice(7, -4));
     
     vsebnik.style.setProperty('--rotation-deg', `${kot - mydeg}deg`);
 }
 function manualSpinEnd(e) {
-    spin();
+    isManuallySpinning = false;
+    spin(smer);
 }
 
 
@@ -141,6 +151,7 @@ async function getMenu(id) {
 
 function won(e) {
     console.log(e);
+    if(!e.animationName === "spin" || isManuallySpinning) return;
     // obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     obrnjeno = (((parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360) + 360) % 360; 
     i = Math.round((1 - obrnjeno/360) * stElementov) % stElementov;
@@ -208,6 +219,7 @@ settings.addEventListener("change", () => {
 
 
 const lerp = (a, b, x) => (a + x * (b - a)); // Linear interpolation
+const plusminus = (p) => (Math.random() < p) ? -1 : 1; // Negate number or not (probability of negation)
 
 
 // Konfeti, https://markoandzan.eu/pai

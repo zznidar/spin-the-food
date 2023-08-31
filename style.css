@@ -80,9 +80,13 @@ ul li {
 .animating {
     animation: spin var(--animation-time) cubic-bezier(var(--kurva)) forwards;
 }
+.animating2 {
+    animation: spin2 0s cubic-bezier(var(--kurva)) forwards;
+}
 
 
 @keyframes spin { 100% { transform:rotate(var(--rotation-deg)); } }
+@keyframes spin2 { 100% { transform:rotate(var(--rotation-deg)); } }
 
 
 .raca {
