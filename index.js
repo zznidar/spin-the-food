@@ -50,7 +50,7 @@ function populateWheel(vsebina) {
     }
 
     vsebnik.style.setProperty('--stElementov', stElementov);
-    spin();
+    //spin();
 }
 
 function spin() {
@@ -119,6 +119,9 @@ function filtriraj() {
     return(filtriraniLokali);
 }
 
+//populateWheel([" ", "  ", "   ", "    ", "     ", "      ", "       "]);
+populateWheel(["Nalaganje lokalov ...".repeat(1), " ".repeat(2), " ".repeat(3), " ".repeat(4), " ".repeat(5), " ".repeat(6), " ".repeat(7), " ".repeat(8), " ".repeat(9), " ".repeat(10)]);
+
 const URL = "https://api.modra.ninja/prehrana/lokali";
 //const URL = "lokali.json";
 fetch(URL).then((response) => {
@@ -127,6 +130,7 @@ fetch(URL).then((response) => {
         //imena = data.map((x) => x.Name);
         filtriraniLokali = filtriraj(lokali);
         populateWheel(filtriraniLokali.map((x) => x.Name));
+        spin();
     });
 })
 
@@ -139,7 +143,7 @@ function won(e) {
     console.log(e);
     // obrnjeno = (parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360; 
     obrnjeno = (((parseFloat(vsebnik.style.getPropertyValue("--rotation-deg").slice(0, -3))+90) % 360) + 360) % 360; 
-    i = Math.round((1 - obrnjeno/360) * stElementov);
+    i = Math.round((1 - obrnjeno/360) * stElementov) % stElementov;
     let ime = filtriraniLokali[i]?.["Name"] ?? "V izbranem času ni odprtih lokalov.";
     console.log(i, ime);
     let p = document.createElement("p");
